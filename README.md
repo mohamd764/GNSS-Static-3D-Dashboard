@@ -1,2 +1,3 @@
 # Static-3D-GNSS-Position-Check-
-A Static 3D GNSS Position Check refers to the process of verifying the accuracy of a Global Navigation Satellite System (GNSS) position by using a stationary device (static) and recording the 3D coordinates (latitude, longitude, and altitude) over time. This method is commonly used for surveying, geodesy, 
+This project is an interactive dashboard built with Python and Dash to visualize and analyze Global Navigation Satellite System (GNSS) data in a static position.  
+It allows users to assess the accuracy of 3D positional data (latitude, longitude, altitude) over
