@@ -3,7 +3,7 @@ name = "gnss-position-check"
 version = "1.0.0"
 description = "Dash app for static 3D GNSS antenna position checks by total station, with rigorous UTM/PROJ grid geodesy."
 readme = "README.md"
-requires-python = ">=3.11"
+requires-python = ">=3.12"
 license = { file = "LICENSE" }
 authors = [{ name = "Mohamed Fouad" }]
 

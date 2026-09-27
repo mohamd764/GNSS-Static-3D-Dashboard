@@ -1,7 +1,7 @@
 # Static 3D GNSS Position Check
 
 [![tests](https://github.com/mohamd764/GNSS-Static-3D-Dashboard/actions/workflows/tests.yml/badge.svg)](https://github.com/mohamd764/GNSS-Static-3D-Dashboard/actions/workflows/tests.yml)
-![Python](https://img.shields.io/badge/python-3.11%20%7C%203.12-blue)
+![Python](https://img.shields.io/badge/python-3.12%20%7C%203.13-blue)
 ![License: MIT](https://img.shields.io/badge/license-MIT-green)
 
 A Plotly Dash web app that verifies the position of a GNSS (DGPS) antenna, for example on a vessel alongside a
@@ -117,7 +117,7 @@ input validation, the vertical formula, the synthetic demo session, the Dash cal
 
 ## Getting started
 
-Requires Python 3.11+.
+Requires Python 3.12+.
 
 ```bash
 git clone https://github.com/mohamd764/GNSS-Static-3D-Dashboard.git
@@ -140,7 +140,7 @@ pip install -r requirements-dev.txt
 pytest -v
 ```
 
-CI runs the suite on Python 3.11 and 3.12 (`.github/workflows/tests.yml`).
+CI runs the suite on Python 3.12 and 3.13 (`.github/workflows/tests.yml`).
 
 To regenerate the screenshots (needs Chrome and `pip install selenium`), start the app and run
 `python scripts/capture_screenshots.py`.
