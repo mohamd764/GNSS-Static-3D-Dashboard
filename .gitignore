@@ -1,0 +1,37 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+build/
+dist/
+.venv/
+venv/
+env/
+
+# Tooling
+.pytest_cache/
+.coverage
+htmlcov/
+.mypy_cache/
+.ruff_cache/
+.ipynb_checkpoints/
+.idea/
+.vscode/
+.DS_Store
+
+# Secrets / local config
+.env
+.env.*
+*.pem
+*.key
+
+# Real project data and generated reports: keep out of the repository
+data/
+private/
+reports/
+*.pdf
+*.csv
+*.xlsx
+*.xls
+!docs/sample-report.pdf
