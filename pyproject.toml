@@ -1,0 +1,12 @@
+[project]
+name = "gnss-position-check"
+version = "1.0.0"
+description = "Dash app for static 3D GNSS antenna position checks by total station, with rigorous UTM/PROJ grid geodesy."
+readme = "README.md"
+requires-python = ">=3.11"
+license = { file = "LICENSE" }
+authors = [{ name = "Mohamed Fouad" }]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+filterwarnings = ["ignore:\\s*The dash_table.DataTable will be removed:DeprecationWarning"]
