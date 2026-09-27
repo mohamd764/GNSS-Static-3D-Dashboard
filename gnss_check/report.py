@@ -41,7 +41,7 @@ def _rows_table(rows: list[dict]) -> str:
 
 
 def build_report_html(report: dict) -> str:
-    """``report`` keys: job, geodesy, horizontal_rows, horizontal_stats, vertical_rows, vertical_stats."""
+    """``report`` keys: job, geodesy, horizontal_rows/_stats/_summary, vertical_rows/_summary."""
     sections = [
         "<h1>Static 3D GNSS Position Check</h1>",
         "<h2>Job Details</h2>",
@@ -55,13 +55,17 @@ def build_report_html(report: dict) -> str:
         sections += [
             "<h2>Horizontal Check</h2>",
             _rows_table(report["horizontal_rows"]),
-            _kv_table(report.get("horizontal_stats", {})),
+            "<br/>",
+            _kv_table(report.get("horizontal_stats") or {}),
+            "<br/>",
+            _rows_table(report.get("horizontal_summary") or []),
         ]
     if report.get("vertical_rows"):
         sections += [
             "<h2>Vertical Check</h2>",
             _rows_table(report["vertical_rows"]),
-            _kv_table(report.get("vertical_stats", {})),
+            "<br/>",
+            _rows_table(report.get("vertical_summary") or []),
         ]
     return (
         "<html><head><meta charset='utf-8'><title>GNSS Position Check Report</title>"

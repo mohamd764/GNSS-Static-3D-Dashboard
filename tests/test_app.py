@@ -51,6 +51,30 @@ def test_geometry_callback_end_to_end(client):
     assert "0.99976317" in rendered
 
 
+def test_horizontal_callback_with_demo_session(client):
+    inst, bs = sample_data.INSTRUMENT, sample_data.BACKSIGHT
+    geometry = [
+        ("crs-mode", "utm"), ("utm-zone", 15), ("hemisphere", "North"), ("epsg-code", None),
+        ("easting", inst["easting"]), ("northing", inst["northing"]),
+        ("backsight-easting", bs["easting"]), ("backsight-northing", bs["northing"]),
+        ("approx-lat", 29.69), ("approx-lon", -94.19),
+    ]
+    extra = [
+        ("backsight-observation-degrees", 0), ("backsight-observation-minutes", 0),
+        ("backsight-observation-seconds", 0.0),
+    ]
+    state = [{"id": k, "property": "value", "value": v} for k, v in geometry + extra]
+    state.append({"id": "gyro-table", "property": "data", "value": sample_data.gyro_rows()})
+    state.append({"id": "apply-scale-factor", "property": "value", "value": True})
+    output = "..results-table.children...statistical-analysis.children...horizontal-store.data.."
+    response = _update(client, output, [{"id": "submit-button", "property": "n_clicks", "value": 1}], state)
+
+    store = response["horizontal-store"]["data"]
+    assert store["stats"]["Successful"] == 12 and store["stats"]["Rejected"] == 0
+    linear = next(r for r in store["summary"] if r["Quantity"] == "Linear misclose")
+    assert linear["Mean (m)"] < 0.04
+
+
 def test_compute_geometry_epsg_equivalent_to_utm():
     inst, bs = sample_data.INSTRUMENT, sample_data.BACKSIGHT
     args = (inst["easting"], inst["northing"], bs["easting"], bs["northing"])

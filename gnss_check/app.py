@@ -165,16 +165,13 @@ def kv_list(items: dict):
     return html.Ul([html.Li([html.Strong(f"{k}: "), fmt(v)]) for k, v in items.items()], className="mb-0")
 
 
-def summary_items(prefix: str, summary, unit: str = "m") -> dict:
-    if summary is None or summary.count == 0:
-        return {}
-    return {
-        f"{prefix} count": summary.count,
-        f"{prefix} mean ({unit})": f"{summary.mean:.3f}",
-        f"{prefix} std dev ({unit})": f"{summary.std:.3f}",
-        f"{prefix} RMS ({unit})": f"{summary.rms:.3f}",
-        f"{prefix} max |value| ({unit})": f"{summary.maximum:.3f}",
-    }
+def summary_rows(named_summaries: dict) -> list[dict]:
+    return [
+        {"Quantity": name, "Count": s.count, "Mean (m)": s.mean, "Std Dev (m)": s.std,
+         "RMS (m)": s.rms, "Max |value| (m)": s.maximum}
+        for name, s in named_summaries.items()
+        if s is not None and s.count
+    ]
 
 
 def build_layout():
@@ -380,15 +377,15 @@ def register_callbacks(app: dash.Dash) -> None:
             "Successful": result.successful_rows,
             "Rejected": result.failed_rows,
             "Distance scale factor applied": f"{scale:.8f}",
-            **summary_items("Linear misclose", result.linear),
-            **summary_items("dE", result.delta_e),
-            **summary_items("dN", result.delta_n),
         }
-        stats_children = [kv_list(stats)]
+        summary = summary_rows({"Linear misclose": result.linear, "dE (calc - GNSS)": result.delta_e,
+                                "dN (calc - GNSS)": result.delta_n})
+        stats_children = [kv_list(stats), html.Div(results_table(summary), className="mt-3")]
         if result.errors:
             stats_children.append(dbc.Alert(html.Ul([html.Li(e) for e in result.errors]), color="warning",
                                             className="mt-3 mb-0"))
-        return results_table(result.rows), stats_children, {"rows": result.rows, "stats": stats}
+        store = {"rows": result.rows, "stats": stats, "summary": summary}
+        return results_table(result.rows), stats_children, store
 
     @app.callback(
         Output("vertical-results", "children"), Output("vertical-store", "data"),
@@ -402,8 +399,9 @@ def register_callbacks(app: dash.Dash) -> None:
             return dbc.Alert("Enter both the instrument station height and the instrument height.",
                              color="danger"), None
         result = vertical_check(station_height, instrument_height, observations or [])
-        stats = summary_items("dH", result.misclose)
-        return html.Div([results_table(result.rows), kv_list(stats)]), {"rows": result.rows, "stats": stats}
+        summary = summary_rows({"dH (calc - GNSS)": result.misclose})
+        body = html.Div([results_table(result.rows), html.Div(results_table(summary), className="mt-3")])
+        return body, {"rows": result.rows, "summary": summary}
 
     @app.callback(
         Output("download-pdf", "data"),
@@ -428,13 +426,15 @@ def register_callbacks(app: dash.Dash) -> None:
             "Backsight Station": bs_name, "Backsight Easting": e2, "Backsight Northing": n2,
             "Backsight Height": bs_h,
         })
+        horizontal, vertical = horizontal or {}, vertical or {}
         report = {
             "job": job,
             "geodesy": geom.report_items(),
-            "horizontal_rows": (horizontal or {}).get("rows"),
-            "horizontal_stats": (horizontal or {}).get("stats"),
-            "vertical_rows": (vertical or {}).get("rows"),
-            "vertical_stats": (vertical or {}).get("stats"),
+            "horizontal_rows": horizontal.get("rows"),
+            "horizontal_stats": horizontal.get("stats"),
+            "horizontal_summary": horizontal.get("summary"),
+            "vertical_rows": vertical.get("rows"),
+            "vertical_summary": vertical.get("summary"),
         }
         pdf = html_to_pdf(build_report_html(report))
         if pdf is None:
