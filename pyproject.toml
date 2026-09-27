@@ -9,4 +9,5 @@ authors = [{ name = "Mohamed Fouad" }]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+pythonpath = ["."]
 filterwarnings = ["ignore:\\s*The dash_table.DataTable will be removed:DeprecationWarning"]
